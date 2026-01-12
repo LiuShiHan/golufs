@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package filereader;
+
+//option go_package = "github.com/example/distributed-file-reader/proto";
+
+import "google/protobuf/timestamp.proto";
+
+service FileReader {
+  // 读取文件内容 (流式传输)
+  rpc ReadFile(ReadFileRequest) returns (stream ReadFileResponse);
+
+  // 获取文件信息
+  rpc GetFileInfo(FileInfoRequest) returns (FileInfoResponse);
+
+  // 列出目录内容
+  rpc ListDirectory(ListDirectoryRequest) returns (ListDirectoryResponse);
+
+  // 健康检查
+  rpc HealthCheck(HealthRequest) returns (HealthResponse);
+}
+
+message ReadFileRequest {
+  string path = 1;
+  int64 offset = 2;
+  int64 length = 3;  // 如果为 -1，表示读取到文件末尾
+  int32 chunk_size = 4; // 块大小，默认 64KB
+}
+
+message ReadFileResponse {
+  bytes content = 1;
+  int64 offset = 2;
+  int64 total_size = 3;
+  bool is_last_chunk = 4;
+}
+
+message FileInfoRequest {
+  string path = 1;
+}
+
+message FileInfoResponse {
+  string name = 1;
+  int64 size = 2;
+  google.protobuf.Timestamp modified_time = 3;
+  bool is_directory = 4;
+  string permissions = 5;
+}
+
+message ListDirectoryRequest {
+  string path = 1;
+}
+
+message ListDirectoryResponse {
+  repeated FileInfoResponse files = 1;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  bool healthy = 1;
+  string message = 2;
+}
