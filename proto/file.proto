@@ -2,8 +2,7 @@ syntax = "proto3";
 
 package filereader;
 
-//option go_package = "github.com/example/distributed-file-reader/proto";
-
+option go_package = "github.com/LiuShiHan/golufs/pb";
 import "google/protobuf/timestamp.proto";
 
 service FileReader {
